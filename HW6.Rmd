@@ -1,0 +1,79 @@
+---
+title: "HW 6"
+author: "JAYNA CLARK"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+Import data set
+
+```{r}
+load("house_prices.rda")
+```
+
+(a) Use facet_wrap to draw line plots to represent the trend for 
+house_price_index over years for each state. .
+Please have three ticks on the x axis which are for years 1980, 2000, and 2020.
+Since you have limited space your
+labels can be ’80, ’00, and ’20 for these ticks.
+
+```{r}
+ggplot(house_prices, aes(x = date, y = house_price_index)) +
+  geom_line() +
+ facet_wrap(~ state)+
+  scale_x_continuous(
+      breaks = as.Date(c("1980-01-01", "2000-01-01", "2020-01-01")),
+    labels = c("’80", "’00", "’20")) +
+  labs(
+    x = "Year",
+    y = "House Price Index",
+    title = "Trends in House Price Index by State") +
+  theme_minimal()
+```
+
+(b) Use gather() function from tidyr to reshape your data in a way that it will
+have measure and value columns for house_price_index and unemploy_perc, 
+respectively, in two columns. You should leave out remaining attributes 
+by using ”-” in front them inside the function. Then, direct the output 
+to a new data frame called house_reshaped Please refer to examples we did 
+in class.
+
+```{r}
+house_reshaped <- house_prices |>
+  gather(key = "measure", value = "value", house_price_index, unemploy_perc)
+```
+
+(c) Use house_reshaped to replicate the graph in 2a with two lines where 
+each represents house_price_index and unemploy_perc over the years for each
+state. Once you have the chart, please comment on it as to whether it’s a
+good graph to present those two pieces of information.
+
+```{r}
+ggplot(house_reshaped, aes(x = date, y = value, color = measure))+
+  geom_line() +
+  facet_wrap(~state) +
+  scale_x_continuous(
+    breaks = as.Date(c("1980-01-01", "2000-01-01", "2020-01-01")),
+    labels = c("’80", "’00", "’20")) +
+  labs(title = "Trends in House Price Index and Unemployment % by State",
+       x = "Year",
+       y = "Value",
+       color = "Measure") +
+  theme_minimal() 
+
+```
+It is a good graph to present House price index- unemployment percent is not 
+shown well as it is much smaller and it is a percentage. It is not shown well 
+because the y-axis goes up to 300 whereas the unemployment % has a maximum value
+of about 18. 
+
